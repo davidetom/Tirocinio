@@ -1,5 +1,3 @@
-#*This Refers to the original README*
-
 # TyDrone
 Navigate your Tello drone with a Mixed Reality virtual cockpit interface. A new dimension of drone control on your MR device.
 
@@ -32,4 +30,3 @@ Please refer to the [User's Manual](https://github.com/ototadana/TyDrone/wiki/Ty
 ## License
 This software is released under the MIT License, see [LICENSE](./LICENSE).
 See [ACKNOWLEDGEMENTS](./ACKNOWLEDGEMENTS) for works on which this software depends.
-
