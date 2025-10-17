@@ -16935,7 +16935,6 @@ GameObject:
   - component: {fileID: 922912507}
   - component: {fileID: 922912508}
   - component: {fileID: 922912510}
-  - component: {fileID: 922912511}
   m_Layer: 0
   m_Name: Cockpit
   m_TagString: Untagged
@@ -17125,18 +17124,6 @@ MonoBehaviour:
   progressRenderer: {fileID: 7236217710578396601}
   message: {fileID: 1325723567}
   lightStrength: {fileID: 2077602240}
---- !u!114 &922912511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 922912492}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a34776537bb1074a961d3d90ec1b386, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &924872653
 GameObject:
   m_ObjectHideFlags: 0

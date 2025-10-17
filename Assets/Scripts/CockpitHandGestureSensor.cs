@@ -57,7 +57,8 @@ public class CockpitHandGestureSensor : MonoBehaviour
 
         foreach (var hand in hands)
         {
-            UpdateCurrentGesture(hand);
+            if (hand != null)
+                UpdateCurrentGesture(hand);
         }
     }
 
@@ -105,14 +106,27 @@ public class CockpitHandGestureSensor : MonoBehaviour
 
     private HandGesture GetHandGesture(IMixedRealityHand hand)
     {
+        // Questo controllo è ridondante se chiamato da UpdateCurrentGesture, ma è una buona pratica mantenerlo
+        if (hand == null) return HandGesture.None;
+
+        // MODIFICA: Aggiunto un controllo per assicurarsi che il visualizzatore della mano sia pronto prima di usarlo.
+        // Questo è il punto che causava l'errore.
+        bool visualizerReady = hand.Visualizer != null && hand.Visualizer.GameObjectProxy != null;
+
         if (!IsTracked(hand))
         {
-            hand.Visualizer.GameObjectProxy.SetActive(false);
+            if (visualizerReady)
+            {
+                hand.Visualizer.GameObjectProxy.SetActive(false);
+            }
             return HandGesture.None;
         }
         else
         {
-            hand.Visualizer.GameObjectProxy.SetActive(true);
+            if (visualizerReady)
+            {
+                hand.Visualizer.GameObjectProxy.SetActive(true);
+            }
         }
 
         var indexIsStanding = IsStanding(hand, TrackedHandJoint.IndexTip, TrackedHandJoint.IndexDistalJoint, TrackedHandJoint.IndexMiddleJoint, TrackedHandJoint.Palm);
@@ -151,6 +165,7 @@ public class CockpitHandGestureSensor : MonoBehaviour
         var c = GetHeight(hand, middle);
         var d = GetHeight(hand, parm);
 
+        // Se una qualsiasi delle giunture non è tracciata, GetHeight restituisce float.MinValue, quindi questo controllo fallirà in modo sicuro.
         return a > b && b > c && c > d && (a - d > 0.05f);
     }
 
@@ -168,6 +183,7 @@ public class CockpitHandGestureSensor : MonoBehaviour
 
     private bool IsTracked(IMixedRealityHand hand)
     {
+        // hand != null viene già controllato prima, ma per sicurezza lo lasciamo.
         return hand != null && hand.Enabled && hand.TrackingState == TrackingState.Tracked;
     }
 
@@ -194,7 +210,11 @@ public class CockpitHandGestureSensor : MonoBehaviour
         renderers = new Renderer[hands.Length];
         for (int i = 0; i < hands.Length; i++)
         {
-            renderers[i] = hands[i].Visualizer.GameObjectProxy.GetComponentInChildren<Renderer>();
+            // MODIFICA: Aggiunto un controllo per evitare errori se il visualizzatore non è pronto durante l'aggiornamento della cache.
+            if (hands[i].Visualizer != null && hands[i].Visualizer.GameObjectProxy != null)
+            {
+                renderers[i] = hands[i].Visualizer.GameObjectProxy.GetComponentInChildren<Renderer>();
+            }
         }
     }
 
@@ -223,6 +243,7 @@ public class CockpitHandGestureSensor : MonoBehaviour
     private IMixedRealityHand[] FindHands()
     {
         List<IMixedRealityHand> hands = new List<IMixedRealityHand>();
+        // Usiamo l'operatore null-conditional (?) per sicurezza
         var controllers = CoreServices.InputSystem?.DetectedControllers;
 
         if (controllers == null)
