@@ -58,6 +58,7 @@ class TyDroneAndroidPlugin : NgoEngine
 
     public override void EntryCommand(string command)
     {
+        Debug.Log($"Comando inviato al Tello: {command}");
         engine.Call("entryCommand", command);
     }
 

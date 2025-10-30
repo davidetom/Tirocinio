@@ -20,6 +20,7 @@ public class CockpitCommandManager : MonoBehaviour
     {
         if (landCount > 0)
         {
+            Debug.Log("Landing iniziato...");
             engine.EntryCommand("land");
             landCount--;
             return;
@@ -27,6 +28,7 @@ public class CockpitCommandManager : MonoBehaviour
 
         if (takeoff)
         {
+            Debug.Log("TakeOff iniziato...");
             engine.EntryCommand("takeoff");
             takeoff = false;
             return;
@@ -34,6 +36,7 @@ public class CockpitCommandManager : MonoBehaviour
 
         if (!string.IsNullOrEmpty(extraCommand))
         {
+            Debug.Log("Comando di movimento extra da inviare...");
             engine.EntryCommand(extraCommand);
             extraCommand = "";
             return;
@@ -41,6 +44,7 @@ public class CockpitCommandManager : MonoBehaviour
 
         if (!string.IsNullOrEmpty(stickCommand))
         {
+            Debug.Log($"Comando di movimento da controller da inviare: {stickCommand}");
             engine.EntryCommand(stickCommand);
             return;
         }
@@ -48,6 +52,7 @@ public class CockpitCommandManager : MonoBehaviour
 
     public void Land()
     {
+        Debug.Log("Land button cliccato e comando ricevuto...");
         landCount = 5;
         takeoff = false;
         stickCommand = "";
@@ -56,11 +61,13 @@ public class CockpitCommandManager : MonoBehaviour
 
     public void Takeoff()
     {
+        Debug.Log("Comando di TakeOff ricevuto...");
         takeoff = true;
     }
 
     public void SetStickCommand(string stickCommand)
     {
+        Debug.Log($"StickCommand: {stickCommand}");
         this.stickCommand = stickCommand;
     }
 

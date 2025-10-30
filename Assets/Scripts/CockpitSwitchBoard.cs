@@ -100,6 +100,7 @@ public class CockpitSwitchBoard : MonoBehaviour
 
     public void Takeoff()
     {
+        Debug.Log("TakeOff button cliccato...");
         commandManager.Takeoff();
         effect.Takeoff();
         calibrateButton.IsToggled = false;

@@ -14,6 +14,7 @@ public class TelloHandGestureModelController : MonoBehaviour
 
     private void Update()
     {
+        // Decide se tracciare le mani in base ai controller (se sono attivi o meno)
         if (OVRInput.GetActiveController() == OVRInput.Controller.Touch)
         {
             return;
@@ -29,6 +30,10 @@ public class TelloHandGestureModelController : MonoBehaviour
     public void SetToHome(bool value)
     {
         toHome = value;
+        
+        if (toHome)
+            Debug.Log("Tello virtuale rilasciato!");
+        else
+            Debug.Log("Tello virtuale afferrato!");
     }
-
 }

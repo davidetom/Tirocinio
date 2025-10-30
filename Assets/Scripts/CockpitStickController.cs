@@ -37,6 +37,13 @@ public class CockpitStickController : MonoBehaviour
 
     public RotationSpeed RotationSpeed { get; set; } = RotationSpeed.Fast;
 
+    // --- VARIABILI PER LA GESTIONE DEL TIMER ---
+    // Tempo in secondi tra un log e l'altro (1.0f = ogni secondo)
+    private const float LogInterval = 1.0f;
+    // Timer che tiene traccia del tempo trascorso dall'ultimo log
+    private float timeSinceLastLog = 0.0f; 
+    // --------------------------------------------
+
     private void Start()
     {
         commandManager = transform.GetComponent<CockpitCommandManager>();
@@ -48,8 +55,16 @@ public class CockpitStickController : MonoBehaviour
 
     private void Update()
     {
+        timeSinceLastLog += Time.deltaTime;
         UpdateCommand();
         var command = $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} {fast}";
+
+        if (timeSinceLastLog >= LogInterval) 
+        {
+            timeSinceLastLog = 0.0f;
+            Debug.Log($"(Movimento del tello virtuale) -> Comando da inviare: {command}");
+        }
+                
         commandManager.SetStickCommand(command);
 
         UpdateColor();
