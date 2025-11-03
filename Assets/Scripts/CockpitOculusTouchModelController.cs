@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(CockpitCommandManager), typeof(CockpitStickController), typeof(CockpitSwitchBoard))]
 public class CockpitOculusTouchModelController : MonoBehaviour
@@ -46,7 +47,7 @@ public class CockpitOculusTouchModelController : MonoBehaviour
         Vector2 l = OVRInput.Get(OVRInput.RawAxis2D.LThumbstick);
         Vector2 r = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick);
 
-        Debug.Log($"(Controller) -> Comandi letti dai joystick: l.x = {l.x}, l.y = {l.y}, r.x = {r.x}, r.y = {r.y}");
+        //Debug.Log($"(Controller) -> Comandi letti dai joystick: l.x = {l.x}, l.y = {l.y}, r.x = {r.x}, r.y = {r.y}");
 
         float m = 0.2f;
         m += 0.4f * OVRInput.Get(OVRInput.RawAxis1D.LHandTrigger);
@@ -88,7 +89,10 @@ public class CockpitOculusTouchModelController : MonoBehaviour
 
     private void SendCommand(Vector2 l, Vector2 r, bool fast)
     {
-        var command = $"stick {r.x:F2} {r.y:F2} {l.x:F2} {l.y:F2} {fast}";
+        //var command = $"stick {r.x:F2} {r.y:F2} {l.x:F2} {l.y:F2} {fast}";
+        var command = FormattableString.Invariant(
+            $"stick {r.x:F2} {r.y:F2} {l.x:F2} {l.y:F2} {fast}"
+        );
         Debug.Log($"(Controller) -> Comando da controller rilevato: {command}");
         commandManager.SetStickCommand(command);
     }

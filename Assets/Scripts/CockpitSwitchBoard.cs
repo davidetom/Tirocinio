@@ -1,5 +1,6 @@
 using Microsoft.MixedReality.Toolkit.UI;
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(CockpitStickController), typeof(CockpitCommandManager), typeof(CockpitEffect))]
 public class CockpitSwitchBoard : MonoBehaviour
@@ -137,21 +138,25 @@ public class CockpitSwitchBoard : MonoBehaviour
             ry = 0f;
 
         if (up)
-            lx = 1f;
-        else if (down)
-            lx = -1f;
-        else
-            lx = 0f;
-            
-        if (rotateCW)
             ly = 1f;
-        else if (rotateCCW)
+        else if (down)
             ly = -1f;
         else
             ly = 0f;
+            
+        if (rotateCW)
+            lx = 1f;
+        else if (rotateCCW)
+            lx = -1f;
+        else
+            lx = 0f;
         
-        var command = $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} {stickController.Fast}";
-        commandManager.SetStickCommand(command);
+        //var command = $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} 1";
+        var command = FormattableString.Invariant(
+            $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} {stickController.Fast}"
+        );
+        if (right || left || forward || back || up || down || rotateCW || rotateCCW)
+            commandManager.SetStickCommand(command);
     }
 
     public void Left(bool setActive)

@@ -65,17 +65,17 @@ public class CockpitCommandManager : MonoBehaviour
         takeoff = true;
     }
 
-    public void SetStickCommand(string stickCommand)
+    public void SetStickCommand(string stickComm)
     {
-        Debug.Log($"StickCommand: {stickCommand}");
-        this.stickCommand = stickCommand;
+        Debug.Log($"StickCommand: {stickComm}");
+        this.stickCommand = stickComm;
     }
 
-    public void SetExtraCommand(string extraCommand)
+    public void SetExtraCommand(string extraComm)
     {
         if(!IsMoving())
         {
-            this.extraCommand = extraCommand;
+            this.extraCommand = extraComm;
         }
     }
     private bool IsMoving()

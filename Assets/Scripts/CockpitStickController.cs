@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public enum RotationSpeed { Fast, Slow }
 
@@ -57,14 +58,21 @@ public class CockpitStickController : MonoBehaviour
     {
         timeSinceLastLog += Time.deltaTime;
         UpdateCommand();
-        var command = $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} {fast}";
+        var command = "";
+        if (rx != 0f || ry != 0f || lx != 0f || ly != 0f)
+        {
+            //var command = $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} {fast}";
+            command = FormattableString.Invariant(
+                $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} {fast}"
+            );
+        }
 
-        if (timeSinceLastLog >= LogInterval) 
+        if (timeSinceLastLog >= LogInterval && !string.IsNullOrEmpty(command))
         {
             timeSinceLastLog = 0.0f;
             Debug.Log($"(Movimento del tello virtuale) -> Comando da inviare: {command}");
         }
-                
+             
         commandManager.SetStickCommand(command);
 
         UpdateColor();
@@ -115,6 +123,7 @@ public class CockpitStickController : MonoBehaviour
         {
             rx = 0f; // RightX left < 0 < right
             ry = 0f; // RightY backward < 0 < forward
+            lx = 0f; // LeftX ccw < 0 < cw
             ly = 0f; // LeftY down < 0 < up
         }
     }
