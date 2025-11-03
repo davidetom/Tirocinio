@@ -24,6 +24,19 @@ public class CockpitSwitchBoard : MonoBehaviour
     [SerializeField]
     private Interactable calibrateButton;
 
+    // Comandi
+    private float rx;
+    private float ry;
+    private float lx;
+    private float ly;
+    private bool left;
+    private bool right;
+    private bool forward;
+    private bool back;
+    private bool up;
+    private bool down;
+    private bool rotateCW;
+    private bool rotateCCW;
 
     private void Start()
     {
@@ -106,4 +119,122 @@ public class CockpitSwitchBoard : MonoBehaviour
         calibrateButton.IsToggled = false;
         turntable.Calibrate = false;
     }
+
+    void Update()
+    {
+        if (right)
+            rx = 1f;
+        else if (left)
+            rx = -1f;
+        else
+            rx = 0f;
+
+        if (forward)
+            ry = 1f;
+        else if (back)
+            ry = -1f;
+        else
+            ry = 0f;
+
+        if (up)
+            lx = 1f;
+        else if (down)
+            lx = -1f;
+        else
+            lx = 0f;
+            
+        if (rotateCW)
+            ly = 1f;
+        else if (rotateCCW)
+            ly = -1f;
+        else
+            ly = 0f;
+        
+        var command = $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} {stickController.Fast}";
+        commandManager.SetStickCommand(command);
+    }
+
+    public void Left(bool setActive)
+    {
+        if (setActive)
+            Debug.Log("Left button premuto...");
+        else
+            Debug.Log("Left button rilasciato...");
+        left = setActive && !right;
+    }
+
+    public void Right(bool setActive)
+    {
+        if (setActive)
+            Debug.Log("Right button premuto...");
+        else
+            Debug.Log("Right button rilasciato...");
+        right = setActive && !left;
+    }
+
+    public void Forward(bool setActive)
+    {
+        if (setActive)
+            Debug.Log("Forward button premuto...");
+        else
+            Debug.Log("Forward button rilasciato...");
+        forward = setActive && !back;
+    }
+
+    public void Back(bool setActive)
+    {
+        if (setActive)
+            Debug.Log("Back button premuto...");
+        else
+            Debug.Log("Back button rilasciato...");
+        back = setActive && !forward;
+    }
+
+    public void Up(bool setActive)
+    {
+        if (setActive)
+            Debug.Log("Up button premuto...");
+        else
+            Debug.Log("Up button rilasciato...");
+        up = setActive && !down;
+    }
+
+    public void Down(bool setActive)
+    {
+        if (setActive)
+            Debug.Log("Down button premuto...");
+        else
+            Debug.Log("Down button rilasciato...");
+        down = setActive && !up;
+    }
+
+    public void RotateCW(bool setActive)
+    {
+        if (setActive)
+            Debug.Log("RotateCW button premuto...");
+        else
+            Debug.Log("RotateCW button rilasciato...");
+        rotateCW = setActive && !rotateCCW;
+    }
+
+    public void RotateCCW(bool setActive)
+    {
+        if (setActive)
+            Debug.Log("RotateCCW button premuto...");
+        else
+            Debug.Log("RotateCCW button rilasciato...");
+        rotateCCW = setActive && !rotateCW;
+    }
+    
+    /* LEGENDA:
+
+        stick rx ry lx ly speed
+        rx: (left) -1 < 0 < 1 (right)
+        ry: (backward) -1 < 0 < 1 (forward)
+        lx: (down) -1 < 0 < 1 (up)
+        ly: (ccw) -1 < 0 < 1 (cw)
+        speed: 0 (slow) or 1 (fast)
+    
+    */
+
 }
