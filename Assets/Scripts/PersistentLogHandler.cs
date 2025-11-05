@@ -10,6 +10,7 @@ public class PersistentLogHandler : MonoBehaviour
     /// <summary>
     /// Prefisso per il nome del file di log. Il timestamp verrà aggiunto a questo.
     /// </summary>
+    [HideInInspector]
     public string logFileNamePrefix = "debuglog";
 
     // Oggetto per scrivere sul file

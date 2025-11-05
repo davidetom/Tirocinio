@@ -2,16 +2,12 @@ using Microsoft.MixedReality.Toolkit.UI;
 using UnityEngine;
 using System;
 
-[RequireComponent(typeof(CockpitStickController), typeof(CockpitCommandManager), typeof(CockpitEffect))]
+[RequireComponent(typeof(CockpitCommandManager))]
 public class CockpitSwitchBoard : MonoBehaviour
 {
     private NgoEngine engine;
-    private CockpitStickController stickController;
     private CockpitCommandManager commandManager;
-    private CockpitEffect effect;
-
-    [SerializeField]
-    private Turntable turntable;
+    private CockpitOculusTouchModelController cockpitController;
 
     [SerializeField]
     private VideoContainerDisplayPositions displayPositions;
@@ -22,10 +18,7 @@ public class CockpitSwitchBoard : MonoBehaviour
     [SerializeField]
     private Interactable recordingButton;
 
-    [SerializeField]
-    private Interactable calibrateButton;
-
-    // Comandi
+    /* Comandi
     private float rx;
     private float ry;
     private float lx;
@@ -38,63 +31,31 @@ public class CockpitSwitchBoard : MonoBehaviour
     private bool down;
     private bool rotateCW;
     private bool rotateCCW;
-
+    */
+    
     private void Start()
     {
         engine = NgoEngine.GetInstance();
-        stickController = GetComponent<CockpitStickController>();
         commandManager = GetComponent<CockpitCommandManager>();
-        effect = GetComponent<CockpitEffect>();
+        cockpitController = GetComponent<CockpitOculusTouchModelController>();
 
-        Debug.Assert(stickController != null);
         Debug.Assert(commandManager != null);
-        Debug.Assert(effect != null);
-        Debug.Assert(turntable != null);
+        Debug.Assert(cockpitController != null);
         Debug.Assert(displayPositions != null);
         Debug.Assert(monitorButton != null);
         Debug.Assert(recordingButton != null);
-        Debug.Assert(calibrateButton != null);
-    }
-
-
-    public bool FPV
-    {
-        get
-        {
-            return !turntable.AutoTurn;
-        }
-
-        set
-        {
-            if (value)
-            {
-                displayPositions.Center();
-                monitorButton.gameObject.SetActive(false);
-                turntable.AutoTurn = false;
-                stickController.RotationSpeed = RotationSpeed.Slow;
-            }
-            else
-            {
-                displayPositions.Bottom();
-                turntable.AutoTurn = true;
-                monitorButton.gameObject.SetActive(true);
-                monitorButton.IsToggled = false;
-                stickController.RotationSpeed = RotationSpeed.Fast;
-            }
-        }
     }
 
     public bool Fast
     {
         get
         {
-            return stickController.Fast;
+            return cockpitController.fast;
         }
 
         set
         {
-            stickController.Fast = value;
-            turntable.Size = value ? Size.Small : Size.Normal;
+            cockpitController.fast = value;
         }
     }
 
@@ -116,11 +77,9 @@ public class CockpitSwitchBoard : MonoBehaviour
     {
         Debug.Log("TakeOff button cliccato...");
         commandManager.Takeoff();
-        effect.Takeoff();
-        calibrateButton.IsToggled = false;
-        turntable.Calibrate = false;
     }
 
+    /*
     void Update()
     {
         if (right)
@@ -151,9 +110,8 @@ public class CockpitSwitchBoard : MonoBehaviour
         else
             lx = 0f;
         
-        //var command = $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} 1";
         var command = FormattableString.Invariant(
-            $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} {stickController.Fast}"
+            $"stick {rx:F2} {ry:F2} {lx:F2} {ly:F2} {cockpitController.fast}"
         );
         if (right || left || forward || back || up || down || rotateCW || rotateCCW)
             commandManager.SetStickCommand(command);
@@ -241,5 +199,4 @@ public class CockpitSwitchBoard : MonoBehaviour
         speed: 0 (slow) or 1 (fast)
     
     */
-
 }

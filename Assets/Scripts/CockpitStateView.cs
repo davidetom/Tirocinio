@@ -21,7 +21,6 @@ public class CockpitStateView : MonoBehaviour
     [SerializeField]
     private GameObject batteryIndicatorObject;
     private IProgressIndicator batteryIndicator;
-
     [SerializeField]
     private Renderer batteryProgressRenderer;
 
@@ -29,7 +28,6 @@ public class CockpitStateView : MonoBehaviour
     [SerializeField]
     private GameObject wifiIndicatorObject;
     private IProgressIndicator wifiIndicator;
-
     [SerializeField]
     private Renderer wifiProgressRenderer;
 
@@ -203,18 +201,6 @@ public class CockpitStateView : MonoBehaviour
             if (i != index) directionIndicators[i].SetActive(false);
             else directionIndicators[i].SetActive(true);
         }
-    }
-
-    [ContextMenu("Attiva bussola")]
-    public void AttivaBussola()
-    {
-        directionIndicators[0].SetActive(true);
-    }
-    
-    [ContextMenu("Disattiva bussola")]
-    public void DisattivaBussola()
-    {
-        directionIndicators[0].SetActive(false);
     }
 
     private class StickCommand

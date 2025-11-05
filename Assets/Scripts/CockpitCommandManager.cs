@@ -73,11 +73,18 @@ public class CockpitCommandManager : MonoBehaviour
 
     public void SetExtraCommand(string extraComm)
     {
-        if(!IsMoving())
+        if (!IsMoving())
         {
             this.extraCommand = extraComm;
         }
     }
+
+    public byte[] SavePicture()
+    {
+        Debug.Log("Comando di SavePicture ricevuto...");
+        return engine.PickImage();
+    }
+    
     private bool IsMoving()
     {
         string[] vals = stickCommand.Split();
