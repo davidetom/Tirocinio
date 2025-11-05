@@ -65,6 +65,9 @@ public class CockpitStateView : MonoBehaviour
         command.text = "";
         notice.text = "";
 
+        for (int i = 0; i < directionIndicators.Count; i++)
+            directionIndicators[i].SetActive(false);
+
         batteryIndicator = batteryIndicatorObject.GetComponent<IProgressIndicator>();
         wifiIndicator = wifiIndicatorObject.GetComponent<IProgressIndicator>();
         await batteryIndicator.OpenAsync();
@@ -197,9 +200,21 @@ public class CockpitStateView : MonoBehaviour
         index = Mathf.Clamp(index, 0, directionIndicators.Count - 1);
         for (int i = 0; i < directionIndicators.Count; i++)
         {
-            if (i != index) directionIndicators[index].SetActive(false);
-            else directionIndicators[index].SetActive(true);
+            if (i != index) directionIndicators[i].SetActive(false);
+            else directionIndicators[i].SetActive(true);
         }
+    }
+
+    [ContextMenu("Attiva bussola")]
+    public void AttivaBussola()
+    {
+        directionIndicators[0].SetActive(true);
+    }
+    
+    [ContextMenu("Disattiva bussola")]
+    public void DisattivaBussola()
+    {
+        directionIndicators[0].SetActive(false);
     }
 
     private class StickCommand
