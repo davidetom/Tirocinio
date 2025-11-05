@@ -1,5 +1,6 @@
 using Microsoft.MixedReality.Toolkit.UI;
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -16,12 +17,27 @@ public class CockpitStateView : MonoBehaviour
     [SerializeField]
     private TMP_Text notice;
 
+    // BATTERY
     [SerializeField]
-    private GameObject indicatorObject;
-    private IProgressIndicator indicator;
+    private GameObject batteryIndicatorObject;
+    private IProgressIndicator batteryIndicator;
 
     [SerializeField]
-    private Renderer progressRenderer;
+    private Renderer batteryProgressRenderer;
+
+    // WIFI
+    [SerializeField]
+    private GameObject wifiIndicatorObject;
+    private IProgressIndicator wifiIndicator;
+
+    [SerializeField]
+    private Renderer wifiProgressRenderer;
+
+    // COMPASS
+    [SerializeField]
+    private Transform arrowObject;
+    [SerializeField]
+    private List<GameObject> directionIndicators;
 
     [SerializeField]
     private Message message;
@@ -31,23 +47,30 @@ public class CockpitStateView : MonoBehaviour
     [SerializeField]
     private Renderer lightStrength;
 
-    public bool EnableDirectionMessage { get; set; } = true;
+    public bool EnableDirectionMessage { get; set; } = false;
 
     private async void Start()
     {
         Debug.Assert(command != null);
         Debug.Assert(notice != null);
-        Debug.Assert(indicatorObject != null);
-        Debug.Assert(progressRenderer != null);
+        Debug.Assert(batteryIndicatorObject != null);
+        Debug.Assert(batteryProgressRenderer != null);
+        Debug.Assert(wifiIndicatorObject != null);
+        Debug.Assert(wifiProgressRenderer != null);
+        Debug.Assert(arrowObject != null);
+        Debug.Assert(directionIndicators != null);
         Debug.Assert(message != null);
 
         engine = NgoEngine.GetInstance();
         command.text = "";
         notice.text = "";
 
-        indicator = indicatorObject.GetComponent<IProgressIndicator>();
-        await indicator.OpenAsync();
-        indicator.Progress = 0f;
+        batteryIndicator = batteryIndicatorObject.GetComponent<IProgressIndicator>();
+        wifiIndicator = wifiIndicatorObject.GetComponent<IProgressIndicator>();
+        await batteryIndicator.OpenAsync();
+        batteryIndicator.Progress = 0f;
+        await wifiIndicator.OpenAsync();
+        wifiIndicator.Progress = 0f;
     }
 
     private void Update()
@@ -57,6 +80,8 @@ public class CockpitStateView : MonoBehaviour
         UpdateMessage(Translate(command.text, lastCommand), notice.text);
 
         UpdateBatteryState(engine.GetState("bat"));
+        UpdateWifiState(engine.GetState("wifi"));
+        UpdateCompass(engine.GetState("yaw"));
         UpdateLightStrength(engine.GetState("lit", -1f));
     }
 
@@ -134,7 +159,7 @@ public class CockpitStateView : MonoBehaviour
     private void UpdateBatteryState(float value)
     {
         var bat = value / 100;
-        indicator.Progress = bat;
+        batteryIndicator.Progress = bat;
         Color color = Color.red;
         if (bat > 0.5f)
         {
@@ -144,7 +169,37 @@ public class CockpitStateView : MonoBehaviour
         {
             color = Color.yellow;
         }
-        progressRenderer.material.color = color;
+        batteryProgressRenderer.material.color = color;
+    }
+
+    private void UpdateWifiState(float value)
+    {
+        var wifi = value / 100;
+        wifiIndicator.Progress = wifi;
+        Color color = Color.red;
+        if (wifi > 0.5f)
+        {
+            color = Color.green;
+        }
+        else if (wifi > 0.2f)
+        {
+            color = Color.yellow;
+        }
+        wifiProgressRenderer.material.color = color;
+    }
+
+    private void UpdateCompass(float value)
+    {
+        var yaw = value;
+        arrowObject.localEulerAngles = new Vector3(arrowObject.localEulerAngles.x, arrowObject.localEulerAngles.y, -yaw);
+        
+        int index = Mathf.FloorToInt(yaw / 45f);
+        index = Mathf.Clamp(index, 0, directionIndicators.Count - 1);
+        for (int i = 0; i < directionIndicators.Count; i++)
+        {
+            if (i != index) directionIndicators[index].SetActive(false);
+            else directionIndicators[index].SetActive(true);
+        }
     }
 
     private class StickCommand
