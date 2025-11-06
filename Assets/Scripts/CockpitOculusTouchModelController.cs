@@ -10,6 +10,10 @@ public class CockpitOculusTouchModelController : MonoBehaviour
     [HideInInspector]
     public bool fast = false;
 
+    private bool controlsEnabled = true;
+    private float imageSaveCooldown = 0.75f;
+    private float lastImageSaveTime = -1f;
+
     private void Start()
     {
         commandManager = GetComponent<CockpitCommandManager>();
@@ -23,6 +27,7 @@ public class CockpitOculusTouchModelController : MonoBehaviour
 
     private void Update()
     {
+        if (!controlsEnabled) return;
         if (OVRInput.GetActiveController() != OVRInput.Controller.Touch)
         {
             return;
@@ -57,7 +62,18 @@ public class CockpitOculusTouchModelController : MonoBehaviour
 
         if (OVRInput.GetDown(OVRInput.RawButton.X))
         {
-            imageSaver.SaveImage();
+            // Verifica se è passato abbastanza tempo dall'ultimo salvataggio
+            if (Time.time - lastImageSaveTime >= imageSaveCooldown)
+            {
+                imageSaver.SaveImage();
+                lastImageSaveTime = Time.time;
+                Debug.Log($"(Controller) -> Salvataggio immagine avviato. Prossimo salvataggio disponibile tra {imageSaveCooldown} secondi.");
+            }
+            else
+            {
+                float remainingTime = imageSaveCooldown - (Time.time - lastImageSaveTime);
+                Debug.LogWarning($"(Controller) -> Salvataggio immagine in cooldown. Attendi ancora {remainingTime:F2} secondi.");
+            }
         }
     }
 
@@ -69,4 +85,7 @@ public class CockpitOculusTouchModelController : MonoBehaviour
         Debug.Log($"(Controller) -> Comando da controller rilevato: {command}");
         commandManager.SetStickCommand(command);
     }
+
+    public void EnableControls() { controlsEnabled = true; }
+    public void DisableControls() { controlsEnabled = false; }
 }

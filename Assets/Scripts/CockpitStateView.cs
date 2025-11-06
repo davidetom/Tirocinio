@@ -10,6 +10,8 @@ public class CockpitStateView : MonoBehaviour
     private static Color LightNG = new Color(0f, 0f, 0f, 0f);
 
     private NgoEngine engine;
+    [SerializeField]
+    private EmergencyProtocol emergencyProtocol;
 
     [SerializeField]
     private TMP_Text command;
@@ -23,6 +25,7 @@ public class CockpitStateView : MonoBehaviour
     private IProgressIndicator batteryIndicator;
     [SerializeField]
     private Renderer batteryProgressRenderer;
+    public float emergencyBatteryPower = 5f;
 
     // WIFI
     [SerializeField]
@@ -30,6 +33,7 @@ public class CockpitStateView : MonoBehaviour
     private IProgressIndicator wifiIndicator;
     [SerializeField]
     private Renderer wifiProgressRenderer;
+    public float emergencyWifiPower = 10f;
 
     // COMPASS
     [SerializeField]
@@ -49,6 +53,7 @@ public class CockpitStateView : MonoBehaviour
 
     private async void Start()
     {
+        Debug.Assert(emergencyProtocol != null);
         Debug.Assert(command != null);
         Debug.Assert(notice != null);
         Debug.Assert(batteryIndicatorObject != null);
@@ -80,8 +85,12 @@ public class CockpitStateView : MonoBehaviour
         notice.text = engine.GetNotice();
         UpdateMessage(Translate(command.text, lastCommand), notice.text);
 
-        UpdateBatteryState(engine.GetState("bat"));
-        UpdateWifiState(engine.GetState("wifi"));
+        float battery = engine.GetState("bat");
+        float wifi = engine.GetState("wifi");
+        if (battery < emergencyBatteryPower || wifi < emergencyWifiPower) emergencyProtocol.EmergencyLand();
+
+        UpdateBatteryState(battery);
+        UpdateWifiState(wifi);
         UpdateCompass(engine.GetState("yaw"));
         UpdateLightStrength(engine.GetState("lit", -1f));
     }
@@ -191,16 +200,19 @@ public class CockpitStateView : MonoBehaviour
 
     private void UpdateCompass(float value)
     {
-        var yaw = value;
-        arrowObject.localEulerAngles = new Vector3(arrowObject.localEulerAngles.x, arrowObject.localEulerAngles.y, -yaw);
-        
+        float yaw = (value + 360f) % 360f;
+
+        arrowObject.localEulerAngles = new Vector3(
+            arrowObject.localEulerAngles.x,
+            arrowObject.localEulerAngles.y,
+            -yaw
+        );
+
         int index = Mathf.FloorToInt(yaw / 45f);
         index = Mathf.Clamp(index, 0, directionIndicators.Count - 1);
+
         for (int i = 0; i < directionIndicators.Count; i++)
-        {
-            if (i != index) directionIndicators[i].SetActive(false);
-            else directionIndicators[i].SetActive(true);
-        }
+            directionIndicators[i].SetActive(i == index);
     }
 
     private class StickCommand
