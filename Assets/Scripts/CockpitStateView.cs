@@ -87,7 +87,7 @@ public class CockpitStateView : MonoBehaviour
 
         float battery = engine.GetState("bat");
         float wifi = engine.GetState("wifi");
-        if (battery < emergencyBatteryPower || wifi < emergencyWifiPower) emergencyProtocol.EmergencyLand();
+        if (battery < emergencyBatteryPower || wifi < emergencyWifiPower) emergencyProtocol.Emergency();
 
         UpdateBatteryState(battery);
         UpdateWifiState(wifi);

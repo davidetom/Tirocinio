@@ -11,8 +11,8 @@ public class CockpitOculusTouchModelController : MonoBehaviour
     public bool fast = false;
 
     private bool controlsEnabled = true;
-    private float imageSaveCooldown = 0.75f;
-    private float lastImageSaveTime = -1f;
+    //private float imageSaveCooldown = 0.75f;
+    //private float lastImageSaveTime = -1f;
 
     private void Start()
     {
@@ -62,7 +62,8 @@ public class CockpitOculusTouchModelController : MonoBehaviour
 
         if (OVRInput.GetDown(OVRInput.RawButton.X))
         {
-            // Verifica se è passato abbastanza tempo dall'ultimo salvataggio
+            commandManager.SetExtraCommand("picture");
+            /* Verifica se è passato abbastanza tempo dall'ultimo salvataggio
             if (Time.time - lastImageSaveTime >= imageSaveCooldown)
             {
                 imageSaver.SaveImage();
@@ -73,7 +74,7 @@ public class CockpitOculusTouchModelController : MonoBehaviour
             {
                 float remainingTime = imageSaveCooldown - (Time.time - lastImageSaveTime);
                 Debug.LogWarning($"(Controller) -> Salvataggio immagine in cooldown. Attendi ancora {remainingTime:F2} secondi.");
-            }
+            }*/
         }
     }
 
