@@ -25,7 +25,6 @@ public class CockpitStateView : MonoBehaviour
     private IProgressIndicator batteryIndicator;
     [SerializeField]
     private Renderer batteryProgressRenderer;
-    public float emergencyBatteryPower = 5f;
 
     // WIFI
     [SerializeField]
@@ -33,7 +32,6 @@ public class CockpitStateView : MonoBehaviour
     private IProgressIndicator wifiIndicator;
     [SerializeField]
     private Renderer wifiProgressRenderer;
-    public float emergencyWifiPower = 10f;
 
     // COMPASS
     [SerializeField]
@@ -87,8 +85,8 @@ public class CockpitStateView : MonoBehaviour
 
         float battery = engine.GetState("bat");
         float wifi = engine.GetState("wifi");
-        if (battery < emergencyBatteryPower || wifi < emergencyWifiPower) emergencyProtocol.Emergency();
-
+        emergencyProtocol.StatusCheck(battery, wifi);
+        
         UpdateBatteryState(battery);
         UpdateWifiState(wifi);
         UpdateCompass(engine.GetState("yaw"));

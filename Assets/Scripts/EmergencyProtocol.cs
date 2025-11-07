@@ -13,12 +13,36 @@ public class EmergencyProtocol : MonoBehaviour
     [SerializeField]
     private GameObject[] objsToDisable;
 
+    public float emergencyBatteryPower = 5f;
+    public float emergencyWifiPower = 10f;
+
+    private float startTime;
+    private float countdownTime = 5f;
+    private bool countdownFinished = false;
+
     void Start()
     {
+        startTime = Time.time;
         Debug.Assert(commandManager != null);
         Debug.Assert(cockpitController != null);
         Debug.Assert(emergencyPanel != null);
         Debug.Assert(objsToDisable != null);
+    }
+
+    void Update()
+    {
+        CountDown();
+    }
+
+    public void StatusCheck(float battery, float wifi)
+    {
+        if (!countdownFinished) return;
+        if (battery < emergencyBatteryPower || wifi < emergencyWifiPower) Emergency();
+    }
+
+    public void CountDown()
+    {
+        if (Time.time - startTime >= countdownTime) countdownFinished = true;
     }
 
     public void Emergency()
@@ -31,6 +55,13 @@ public class EmergencyProtocol : MonoBehaviour
         StartEmergencyProtocol();
     }
 
+    private void StartEmergencyProtocol()
+    {
+        emergencyPanel.SetActive(true);
+        for (int i = 0; i < objsToDisable.Length; i++) objsToDisable[i].SetActive(false);
+    }
+
+    /*
     public void Restart()
     {
         // Riattiva Controlli
@@ -39,18 +70,11 @@ public class EmergencyProtocol : MonoBehaviour
         // Avvia il protocollo di riavvio
         RestartProtocol();
     }
-
-    [ContextMenu("Protocollo di Emergenza")]
-    private void StartEmergencyProtocol()
-    {
-        emergencyPanel.SetActive(true);
-        for (int i = 0; i < objsToDisable.Length; i++) objsToDisable[i].SetActive(false);
-    }
     
-    [ContextMenu("Protocollo di Riavvio")]
     private void RestartProtocol()
     {
         emergencyPanel.SetActive(false);
         for (int i = 0; i < objsToDisable.Length; i++) objsToDisable[i].SetActive(true);
     }
+    */
 }
